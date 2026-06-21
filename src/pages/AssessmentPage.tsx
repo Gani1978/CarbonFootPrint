@@ -116,156 +116,158 @@ export function AssessmentPage() {
       title="Carbon Footprint Assessment"
       subtitle="Answer these questions to calculate your environmental impact"
     >
-      {/* Category Navigation */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((cat) => {
-          const completion = categoryCompletion[cat];
-          const isComplete = completion.answered === completion.total;
-          const isCurrent = currentQuestion.category === cat;
-          return (
-            <button
-              key={cat}
-              onClick={() => {
-                const firstQ = assessmentQuestions.findIndex((q) => q.category === cat);
-                if (firstQ >= 0) setCurrentIndex(firstQ);
-              }}
-              className={`
-                flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
-                transition-all duration-200 border
-                ${isCurrent
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                  : isComplete
-                    ? 'bg-white/5 text-green-400 border-green-500/20'
-                    : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
-                }
-              `.trim()}
-              aria-label={`${CATEGORY_LABELS[cat]} — ${completion.answered}/${completion.total} answered`}
-            >
-              {isComplete ? <CheckCircle2 size={16} className="text-green-400" /> : categoryIcons[cat]}
-              <span className="hidden sm:inline">{CATEGORY_LABELS[cat]}</span>
-              <span className="text-xs opacity-60">{completion.answered}/{completion.total}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Progress */}
-      <ProgressBar
-        value={progress}
-        label={`Question ${currentIndex + 1} of ${totalQuestions}`}
-        showPercentage
-        size="md"
-        className="mb-8"
-      />
-
-      {/* Question Card */}
-      <Card glow padding="lg" className="max-w-3xl mx-auto mb-8">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-emerald-400">{categoryIcons[currentQuestion.category]}</span>
-          <span className="text-sm text-emerald-400 font-medium">
-            {CATEGORY_LABELS[currentQuestion.category]}
-          </span>
+      <div className="max-w-3xl mx-auto">
+        {/* Category Navigation */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {categories.map((cat) => {
+            const completion = categoryCompletion[cat];
+            const isComplete = completion.answered === completion.total;
+            const isCurrent = currentQuestion.category === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => {
+                  const firstQ = assessmentQuestions.findIndex((q) => q.category === cat);
+                  if (firstQ >= 0) setCurrentIndex(firstQ);
+                }}
+                className={`
+                  flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+                  transition-all duration-200 border
+                  ${isCurrent
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    : isComplete
+                      ? 'bg-white/5 text-green-400 border-green-500/20'
+                      : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
+                  }
+                `.trim()}
+                aria-label={`${CATEGORY_LABELS[cat]} — ${completion.answered}/${completion.total} answered`}
+              >
+                {isComplete ? <CheckCircle2 size={16} className="text-green-400" /> : categoryIcons[cat]}
+                <span className="hidden sm:inline">{CATEGORY_LABELS[cat]}</span>
+                <span className="text-xs opacity-60">{completion.answered}/{completion.total}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-          {currentQuestion.question}
-        </h2>
-        {currentQuestion.description && (
-          <p className="text-slate-400 text-sm mb-6">{currentQuestion.description}</p>
-        )}
+        {/* Progress */}
+        <ProgressBar
+          value={progress}
+          label={`Question ${currentIndex + 1} of ${totalQuestions}`}
+          showPercentage
+          size="md"
+          className="mb-8"
+        />
 
-        {/* Options (single choice) */}
-        {currentQuestion.type === 'single' && currentQuestion.options && (
-          <div className="space-y-3" role="radiogroup" aria-label={currentQuestion.question}>
-            {currentQuestion.options.map((option) => {
-              const isSelected = getSelectedOption(currentQuestion.id) === option.id;
-              return (
-                <button
-                  key={option.id}
-                  onClick={() => handleSelectOption(currentQuestion.id, option.id, option.emissionFactor)}
-                  className={`
-                    w-full text-left px-5 py-4 rounded-xl border transition-all duration-200
-                    ${isSelected
-                      ? 'bg-emerald-500/20 border-emerald-500/40 text-white ring-2 ring-emerald-400/30'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
-                    }
-                  `.trim()}
-                  role="radio"
-                  aria-checked={isSelected}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`
-                      w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                      ${isSelected ? 'border-emerald-400 bg-emerald-400' : 'border-slate-500'}
-                    `}>
-                      {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+        {/* Question Card */}
+        <Card glow padding="lg" className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-emerald-400">{categoryIcons[currentQuestion.category]}</span>
+            <span className="text-sm text-emerald-400 font-medium">
+              {CATEGORY_LABELS[currentQuestion.category]}
+            </span>
+          </div>
+
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            {currentQuestion.question}
+          </h2>
+          {currentQuestion.description && (
+            <p className="text-slate-400 text-sm mb-6">{currentQuestion.description}</p>
+          )}
+
+          {/* Options (single choice) */}
+          {currentQuestion.type === 'single' && currentQuestion.options && (
+            <div className="space-y-3" role="radiogroup" aria-label={currentQuestion.question}>
+              {currentQuestion.options.map((option) => {
+                const isSelected = getSelectedOption(currentQuestion.id) === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => handleSelectOption(currentQuestion.id, option.id, option.emissionFactor)}
+                    className={`
+                      w-full text-left px-5 py-4 rounded-xl border transition-all duration-200
+                      ${isSelected
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-white ring-2 ring-emerald-400/30'
+                        : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
+                      }
+                    `.trim()}
+                    role="radio"
+                    aria-checked={isSelected}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`
+                        w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                        ${isSelected ? 'border-emerald-400 bg-emerald-400' : 'border-slate-500'}
+                      `}>
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                      <span className="font-medium">{option.label}</span>
                     </div>
-                    <span className="font-medium">{option.label}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Slider */}
-        {currentQuestion.type === 'slider' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-sm">{currentQuestion.min} {currentQuestion.unit}</span>
-              <span className="text-2xl font-bold text-emerald-400">
-                {getSliderValue(currentQuestion.id)} {currentQuestion.unit}
-              </span>
-              <span className="text-slate-400 text-sm">{currentQuestion.max} {currentQuestion.unit}</span>
+                  </button>
+                );
+              })}
             </div>
-            <input
-              type="range"
-              min={currentQuestion.min}
-              max={currentQuestion.max}
-              step={currentQuestion.step}
-              value={getSliderValue(currentQuestion.id)}
-              onChange={(e) => handleSliderChange(currentQuestion.id, Number(e.target.value))}
-              className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400
-                [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-emerald-400/30
-                [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform
-                [&::-webkit-slider-thumb]:hover:scale-110"
-              aria-label={currentQuestion.question}
-            />
-          </div>
-        )}
-      </Card>
+          )}
 
-      {/* Navigation */}
-      <div className="flex items-center justify-between max-w-3xl mx-auto">
-        <Button
-          variant="ghost"
-          onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-          disabled={currentIndex === 0}
-          icon={<ArrowLeft size={16} />}
-        >
-          Previous
-        </Button>
+          {/* Slider */}
+          {currentQuestion.type === 'slider' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 text-sm">{currentQuestion.min} {currentQuestion.unit}</span>
+                <span className="text-2xl font-bold text-emerald-400">
+                  {getSliderValue(currentQuestion.id)} {currentQuestion.unit}
+                </span>
+                <span className="text-slate-400 text-sm">{currentQuestion.max} {currentQuestion.unit}</span>
+              </div>
+              <input
+                type="range"
+                min={currentQuestion.min}
+                max={currentQuestion.max}
+                step={currentQuestion.step}
+                value={getSliderValue(currentQuestion.id)}
+                onChange={(e) => handleSliderChange(currentQuestion.id, Number(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
+                  [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400
+                  [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-emerald-400/30
+                  [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform
+                  [&::-webkit-slider-thumb]:hover:scale-110"
+                aria-label={currentQuestion.question}
+              />
+            </div>
+          )}
+        </Card>
 
-        {isLastQuestion ? (
+        {/* Navigation */}
+        <div className="flex items-center justify-between">
           <Button
-            onClick={handleComplete}
-            disabled={assessmentState.answers.length < totalQuestions * 0.7}
-            icon={<CheckCircle2 size={16} />}
+            variant="ghost"
+            onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
+            disabled={currentIndex === 0}
+            icon={<ArrowLeft size={16} />}
           >
-            See My Results
+            Previous
           </Button>
-        ) : (
-          <Button
-            onClick={() => setCurrentIndex(currentIndex + 1)}
-            icon={<ArrowRight size={16} />}
-            iconPosition="right"
-            variant={hasAnsweredCurrent ? 'primary' : 'secondary'}
-          >
-            {hasAnsweredCurrent ? 'Next' : 'Skip'}
-          </Button>
-        )}
+
+          {isLastQuestion ? (
+            <Button
+              onClick={handleComplete}
+              disabled={assessmentState.answers.length < totalQuestions * 0.7}
+              icon={<CheckCircle2 size={16} />}
+            >
+              See My Results
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setCurrentIndex(currentIndex + 1)}
+              icon={<ArrowRight size={16} />}
+              iconPosition="right"
+              variant={hasAnsweredCurrent ? 'primary' : 'secondary'}
+            >
+              {hasAnsweredCurrent ? 'Next' : 'Skip'}
+            </Button>
+          )}
+        </div>
       </div>
     </PageContainer>
   );

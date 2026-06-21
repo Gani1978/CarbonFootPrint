@@ -43,8 +43,8 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation (Hidden on lg+ since sidebar is visible) */}
+          <div className="hidden md:flex lg:hidden items-center gap-1">
             {NAV_ITEMS.slice(0, 5).map((item) => {
               const isActive = location.pathname === item.path;
               return (
